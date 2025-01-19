@@ -59,10 +59,10 @@ A significant feature of this plugin is the ability to nest boxes. For example:
 ```md:
 <!-- Markdown -->
 :::note info
-文章
+TEXT
 
 :::note warn
-文章
+TEXT
 :::
 
 :::
