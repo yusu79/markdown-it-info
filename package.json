@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-info",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "The markdown-it plugin that enables easy creation of Qiita and Zenn-style admonition boxes within Markdown documents.",
   "main": "index.js",
   "scripts": {
