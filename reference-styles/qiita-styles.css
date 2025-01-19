@@ -1,0 +1,112 @@
+@font-face {
+    /* 
+        Material Symbols and Icons (https://fonts.google.com/icons)
+        Copyright (c) Google LLC
+        Licensed under the Apache License, Version 2.0 ("../fonts/LICENSE.txt")
+    */
+    font-family: 'Material Symbols and Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url("../fonts/MaterialSymbolsOutlined_Filled-Regular.woff") format('woff');
+}
+.qiita-admonition {
+    position: relative;
+    margin: 1.5625em 0;
+    padding: 0 1.2rem;
+    border-radius: 8px;
+    overflow: auto;
+}
+
+.qiita-admonition>p {
+    margin-top: .8rem;
+}
+
+.qiita-admonition>.qiita-admonition-title {
+    margin: 0 -1.2rem;
+    padding: .8rem 1.2rem .8rem 3.6rem;
+    font-weight: 700;
+}
+
+.qiita-admonition>.qiita-admonition-title:before {
+    font-family: 'Material Symbols and Icons';
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 2rem;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    position: absolute;
+    left: 1.2rem;
+    font-size: 1.5rem;
+    top: 0.65rem;
+}
+
+.qiita-admonition.info {
+    border-left: .4rem solid rgba(42,98,0);
+    background-color: rgba(42,98,0);
+    border-left-color: rgba(42,98,0);
+}
+
+.qiita-admonition.info>.qiita-admonition-title {
+    background-color: rgba(42,98,0);
+    border-bottom-color: rgba(42,98,0);
+}
+
+.qiita-admonition.info>.qiita-admonition-title:before {
+    color: rgb(102,202,27);
+    content: "\e86c";
+}
+
+.qiita-admonition.warn,
+.qiita-admonition.warning {
+    border-left: .4rem solid rgb(105,80,3);
+    background-color: rgb(105,80,3);
+    border-left-color: rgb(105,80,3);
+}
+
+.qiita-admonition.warn>.qiita-admonition-title,
+.qiita-admonition.warning>.qiita-admonition-title {
+    background-color: rgb(105,80,3);
+    border-bottom-color: rgb(105,80,3);
+}
+
+.qiita-admonition.warn>.qiita-admonition-title:before,
+.qiita-admonition.warning>.qiita-admonition-title:before {
+    color: rgb(254,218,87);
+    content: "\e000";
+}
+
+.qiita-admonition.alert {
+    border-left: .4rem solid rgb(109,2,2);
+    background-color: rgb(109,2,2);
+    border-left-color: rgb(109,2,2);
+}
+
+.qiita-admonition.alert>.qiita-admonition-title {
+    background-color: rgb(109,2,2);
+    border-bottom-color: rgb(109,2,2);
+}
+
+.qiita-admonition.alert>.qiita-admonition-title:before {
+    color: rgb(254,116,117);
+    content: "\e5c9";
+}
+
+.qiita-admonition.question {
+    border-left: .4rem solid rgba(68, 138, 255);
+    background-color: rgba(68, 138, 255);
+    border-left-color: rgba(68, 138, 255);
+}
+
+.qiita-admonition.question>.qiita-admonition-title {
+    background-color: rgba(68, 138, 255);
+    border-bottom-color: rgba(68, 138, 255);
+}
+
+.qiita-admonition.question>.qiita-admonition-title:before {
+    color: rgb(173, 206, 254);
+    content: "\e887";
+}
+

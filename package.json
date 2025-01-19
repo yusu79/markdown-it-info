@@ -1,0 +1,28 @@
+{
+  "name": "markdown-it-info",
+  "version": "0.0.0",
+  "description": "The markdown-it plugin that enables easy creation of Qiita and Zenn-style admonition boxes within Markdown documents.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yusu79/markdown-it-info.git"
+  },
+  "keywords": [
+    "markdown",
+    "markdown-it",
+    "markdown-it-plugin"
+  ],
+  "author": {
+    "name": "yusu79",
+    "email": "oss@yusu79.com",
+    "url": "https://github.com/yusu79"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/yusu79/markdown-it-info#readme",
+  "sponsor": {
+    "url": "https://github.com/sponsors/yusu79"
+  }
+}
