@@ -1,3 +1,17 @@
+/*  Original Code: [qjebbs/vscode-markdown-extended: Extended syntaxes to built-in markdown & What you see is what you get exporter.](https://github.com/qjebbs/vscode-markdown-extended)
+    * 
+    * MIT License (MIT)
+    * 
+    * Copyright (c) 2018 jebbs
+    * 
+    * オリジナルコードの`styles/markdown-it-admonition.css`をコピーし､改変して実装している｡
+    * 
+    * 以下、主な改変部分の説明｡
+    * 1. font-familyの変更。
+    * 2. 属性をinfo, warn, warning, alert, questionに絞る｡
+    * 3. 色やコンテンツの変更｡
+*/
+
 @font-face {
   /* 
       Material Symbols and Icons (https://fonts.google.com/icons)
@@ -10,7 +24,7 @@
   src: url("../fonts/MaterialSymbolsOutlined_Filled-Regular.woff") format('woff');
 }
 
-.admonition {
+.default-admonition {
   position: relative;
   margin: 1.5625em 0;
   padding: 0 1.2rem;
@@ -20,11 +34,11 @@
   overflow: auto;
 }
 
-.admonition>p {
+.default-admonition>p {
   margin-top: .8rem;
 }
 
-.admonition>.admonition-title {
+.default-admonition>.default-admonition-title {
   margin: 0 -1.2rem;
   padding: .8rem 1.2rem .8rem 3.6rem;
   border-bottom: 1px solid rgba(68, 138, 255, .2);
@@ -32,7 +46,7 @@
   font-weight: 700;
 }
 
-.admonition>.admonition-title:before {
+.default-admonition>.default-admonition-title:before {
   font-family: "Material Symbols and Icons";
   font-style: normal;
   font-variant: normal;
@@ -48,61 +62,61 @@
   top: 0.65rem;
 }
 
-.admonition.info {
+.default-admonition.info {
   border-left-color: rgba(100, 221, 23, .8);
 }
 
-.admonition.info>.admonition-title {
+.default-admonition.info>.default-admonition-title {
   background-color: rgba(100, 221, 23, .1);
   border-bottom-color: rgba(100, 221, 23, .2);
 }
 
-.admonition.info>.admonition-title:before {
+.default-admonition.info>.default-admonition-title:before {
   color: rgba(100, 221, 23, 1);
   content: "\E88E";
 }
 
-.admonition.warn,
-.admonition.warning {
+.default-admonition.warn,
+.default-admonition.warning {
   border-left-color: rgba(255, 145, 0, .8);
 }
 
-.admonition.warn>.admonition-title,
-.admonition.warning>.admonition-title {
+.default-admonition.warn>.default-admonition-title,
+.default-admonition.warning>.default-admonition-title {
   background-color: rgba(255, 145, 0, .1);
   border-bottom-color: rgba(255, 145, 0, .2);
 }
 
-.admonition.warn>.admonition-title:before,
-.admonition.warning>.admonition-title:before {
+.default-admonition.warn>.default-admonition-title:before,
+.default-admonition.warning>.default-admonition-title:before {
   color: rgba(255, 145, 0, 1);
   content: "\E002";
 }
 
-.admonition.alert {
+.default-admonition.alert {
   border-left-color: rgba(255, 23, 68, .8);
 }
 
-.admonition.alert>.admonition-title {
+.default-admonition.alert>.default-admonition-title {
   background-color: rgba(255, 23, 68, .1);
   border-bottom-color: rgba(255, 23, 68, .2);
 }
 
-.admonition.alert>.admonition-title:before {
+.default-admonition.alert>.default-admonition-title:before {
   color: rgba(255, 23, 68, 1);
   content: "\E14C";
 }
 
-.admonition.question {
+.default-admonition.question {
   border-left-color: rgba(0, 184, 212, .8);
 }
 
-.admonition.question>.admonition-title {
+.default-admonition.question>.default-admonition-title {
   background-color: rgba(0, 184, 212, .1);
   border-bottom-color: rgba(0, 184, 212, .2);
 }
 
-.admonition.question>.admonition-title:before {
+.default-admonition.question>.default-admonition-title:before {
   color: rgba(0, 184, 212, 1);
   content: "\E887";
 }

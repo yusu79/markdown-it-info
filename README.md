@@ -7,12 +7,10 @@ The [markdown-it](https://l.pg1x.com/G6nd) plugin that enables easy creation of 
 
 <!-- omit in toc -->
 - [Setup](#setup)
-- [Features](#features)
 - [Quick Usage](#quick-usage)
 - [Usage](#usage)
-- [Options](#options)
-- [Reference-Styles](#reference-styles)
-- [Extension](#extension)
+- [Features](#features)
+- [Extensions](#extensions)
 - [Acknowledgments](#acknowledgments)
 
 ## Setup
@@ -29,8 +27,53 @@ const
     md = require('markdown-it')(),
     plugin = require("markdown-it-info");
 
-md.use(plugin);
+md.use(plugin,{options});
 ```
+Params:
+
+- **options**:
+  - **admonitionStyle** - Optional value to change the CSS style sheet. Default is “default”, others are “qiita” and “zen”.
+  - **defaultType** - Optional value to change the default type of the box. Default is “info”, others are “warn”, “warning”, “alert” and “question”.
+  - **defaultTitle** - Optional value to change the default title of the box. Default is “Enter the title here”.
+
+
+## Quick Usage
+Input in Markdown:
+```md:
+:::note info TITLE
+CONTENT
+:::
+```
+
+
+Rendering in HTML:
+```html:
+<div class="default-admonition info">
+<p class="default-admonition-title">TITLE</p>
+<p>CONTENT</p>
+</div>
+```
+
+## Usage
+This is a markdown-it plugin that allows you to easily create an “Admonition Box”.
+
+Normally, the “default-admonition” class is assigned, but “qiita-admonition” and “zenn-admonition” can be assigned by changing the admonitionStyle.
+
+This plugin alone only gives a class, but the included stylesheet will decorate the box.
+
+admonitionStyle is "default":
+
+![default-admonition](./images/default-admonition.png)
+
+admonitionStyle is "qiita":
+
+![qiita-admonition](./images/qiita-admonition.png)
+
+admonitionStyle is "zenn":
+
+![zenn-admonition](./images/zenn-admonition.png)
+
+
 
 ## Features
 markdown-it-info's key features include:
@@ -42,75 +85,9 @@ markdown-it-info's key features include:
 
 These features enhance the readability and visual appeal of technical documents and blog posts.
 
-## Quick Usage
-| Style       | Input                                      | Render                                                                                                   | Description                                                                                                                                                                                   |
-| ----------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Qiita-style | ```:::note type title```<br>```content```<br>```:::```     | ```<div class="admonition 'type'">```<br>```<p class="admonition-title">'title'</p>```<br>```<p>'content'</p>```<br>```</div>```   | [Qiita](https://qiita.com/) style syntax.<br> Add `note` right after `:::` and close with `:::` to create a box.<br> If type and title are omitted, default values will be automatically inserted.  |
-| Zenn-style  | ```:::message type title```<br>```content```<br>```:::``` | ```<div class="admonition 'type'">```<br>```<p class="admonition-title">'title'</p>```<br>```<p>'content'</p>```<br>```</div>```   | [Zenn](https://zenn.dev/) style syntax.<br>Add `message` right after `:::` and close with `:::` to create a box. <br>If type and title are omitted, default values will be automatically inserted. |
 
-
-## Usage
-This is a markdown-it plugin that allows you to create Admonition Boxes in Markdown document using Qiita and Zenn styles.
-
-You can create boxes using the respective syntax of each platform, but please note that there's a slight difference in the Qiita style. In Qiita, the next line automatically becomes the title, whereas in this plugin, you need to write `:::note type title` on the same line.
-
-A significant feature of this plugin is the ability to nest boxes. For example:
-
-```md:
-<!-- Markdown -->
-:::note info
-TEXT
-
-:::note warn
-TEXT
-:::
-
-:::
-```
-```html:
-<!-- Rendered HTML -->
-<div class="admonition info">
-    <p class="admonition-title">Enter the title here</p>
-    <p>TEXT</p>
-    <div class="admonition warn">
-        <p class="admonition-title">Enter the title here</p>
-        <p>TEXT</p>
-    </div>
-</div>
-```
-
-When written like this, a warn-type box is created inside the first info-type box. This is useful when you want to express complex information.
-
-Types and titles can be omitted, in which case default values will be used. It's also possible to omit only the type and write just the title.
-
-
-## Options
-There are three options.
-```js:
-md.use(plugin, {
-    admonitionStyle: "default",
-    defaultType: "info",
-    defaultTitle: "Enter the title here"
-});
-```
-
-- `admonitionStyle` is an option that allows you to change the class name. The default is "default", and you can also choose "qiita" or "zenn".
-- `defaultType` is an option that allows you to change the default type of the box. The default is "info", and you can select from "warn", "warning", "alert", or "question".
-- `defaultTitle` is an option that allows you to change the default title of the box. The default is set to "Enter the title here".
-
-
-## Reference-Styles
-markdown-it-info is a tool that can render `:::note` and similar syntax as `<div class="admonition info">`.
-
-By itself, this only adds a class, so we have prepared the corresponding CSS for styling in `./reference-styles/`.
-
-By changing the `admonitionStyle` option to "qiita" or "zenn", you can modify the class to `<div class="qiita-admonition info">` or `<div class="zenn-admonition info">`, respectively. Please use the appropriate CSS for each style.
-
-
-## Extension
-I have created a VSCode extension called "[yusu79/vscode-markdown-info](https://github.com/yusu79/vscode-markdown-info)" that allows you to actually use the CSS prepared in `./reference-styles/`.
-
-By installing this extension and writing `:::note info` in your Markdown, the CSS will be applied in the Markdown preview window.
+## Extensions
+- [yusu79/vscode-markdown-info](https://github.com/yusu79/vscode-markdown-info)
 
 ## Acknowledgments
 In developing this project, we referenced the following open source software. We would like to express our gratitude:

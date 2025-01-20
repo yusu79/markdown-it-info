@@ -32,7 +32,7 @@ function renderAdmonitionOpen(config) {
     return(tokens, index, options, _env, self) => {
         const 
             token = tokens[index],
-            stylePrefix = config.admonitionStyle === 'default' ? '' : `${config.admonitionStyle}-`;
+            stylePrefix = `${config.admonitionStyle}-`;
 
         token.attrJoin("class", `${stylePrefix}admonition ${token.info}`);
         return self.renderToken(tokens, index, options);
@@ -41,7 +41,7 @@ function renderAdmonitionOpen(config) {
 
 function renderAdmonitionTitleOpen(config) {
     return (tokens, index, options, _env, self) => {
-        const stylePrefix = config.admonitionStyle === 'default' ? '' : `${config.admonitionStyle}-`;
+        const stylePrefix = `${config.admonitionStyle}-`;
         
         tokens[index].attrJoin("class", `${stylePrefix}admonition-title`);
         return self.renderToken(tokens, index, options);
@@ -69,13 +69,14 @@ function admonition(config) {
         
         if (params[0] !== "note" && params[0] !== "message") return false;
         
-        const type = VALID_TYPES.has(params[1]) ? params[1] : config.defaultType;
-        let title = params[2] || config.defaultTitle;
+        let type, title;
         
-        if (params.length == 2 && VALID_TYPES.has(params[1])) {
-            title = config.defaultTitle;
-        } else if (params.length == 2) {
-            title = params[1];
+        if (VALID_TYPES.has(params[1])) {
+            type = params[1];
+            title = params.slice(2).join(' ') || config.defaultTitle;
+        } else {
+            type = config.defaultType;
+            title = params.slice(1).join(' ') || config.defaultTitle;
         }
 
         // ブロックの終了位置を検索
