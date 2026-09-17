@@ -76,14 +76,12 @@ READMEの作成や編集をする場合は、`write-readme`SKILLを使用する�
 
 CHANGELOGの作成や編集をする場合は、`write-changelog`SKILLを使用する。
 
-## release-1.y.zブランチでの作業
+## 開発ノートの作成・編集
 
-- tagは`git tag -a v1.y.z -m "v1.y.z"`で付ける
+調査で得た知識を「開発ノート」にまとめてと言われたら、`write-dev-knowledge`SKILLを使用する。
 
 ## リリース時の確認
 
 以下を必ず確認する
 
 - `CHANGELOG.md` の日付が今日になっているか
-- mainを`feature-*`や`hotfix-*`にマージする際は、できるだけfast-forwardにしているか
-
