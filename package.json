@@ -1,10 +1,25 @@
 {
   "name": "markdown-it-info",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "The markdown-it plugin that enables easy creation of Qiita and Zenn-style admonition boxes within Markdown documents.",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "src/",
+    "reference-styles/",
+    "fonts/",
+    "images/",
+    "CHANGELOG.md"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint index.js src test eslint.config.js",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
+    "markdown-it": "^15.0.2"
   },
   "repository": {
     "type": "git",
