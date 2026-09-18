@@ -390,7 +390,7 @@ function resolveTypeAttributes(config, type) {
     }
 
     return {
-        classes: typeConfig.classes === undefined ? config.classes : typeConfig.classes,
+        classes: [...config.classes, ...(typeConfig.classes || [])],
         values: { ...config.attributes, ...typeConfig.attributes }
     };
 }
@@ -457,11 +457,12 @@ function resolveFrontmatterAttributes(env, type) {
 
     const typeConfig = noteConfig[type];
     const hasTypeConfig = isConfigObject(typeConfig);
-    const hasTypeClasses = hasTypeConfig
-        && Object.prototype.hasOwnProperty.call(typeConfig, "classes");
 
     return {
-        classes: normalizeClasses(hasTypeClasses ? typeConfig.classes : noteConfig.classes),
+        classes: [
+            ...normalizeClasses(noteConfig.classes),
+            ...normalizeClasses(hasTypeConfig ? typeConfig.classes : undefined)
+        ],
         values: {
             ...normalizeAttributes(noteConfig.attributes),
             ...normalizeAttributes(hasTypeConfig ? typeConfig.attributes : undefined)
