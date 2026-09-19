@@ -89,7 +89,7 @@ test("ignores class in attributes and invalid attribute names", () => {
     assert.match(html, /data-valid="value"/);
 });
 
-test("allows type-specific classes and attributes to override common settings", () => {
+test("adds type-specific classes and overrides duplicate attributes in options", () => {
     const options = {
         classes: "common-class",
         attributes: {
@@ -110,8 +110,7 @@ test("allows type-specific classes and attributes to override common settings", 
     const infoHtml = render(":::note info Title\nContent\n:::\n", options);
     const warnHtml = render(":::note warn Title\nContent\n:::\n", options);
 
-    assert.match(infoHtml, /class="bordered-admonition info info-class"/);
-    assert.doesNotMatch(infoHtml, /common-class/);
+    assert.match(infoHtml, /class="bordered-admonition info common-class info-class"/);
     assert.match(infoHtml, /role="note"/);
     assert.match(infoHtml, /data-level="info"/);
     assert.match(infoHtml, /aria-label="Information"/);
@@ -145,7 +144,7 @@ test("reads common classes and attributes from env.frontmatter", () => {
     assert.match(html, /data-source="markdown"/);
 });
 
-test("uses type-specific YAML classes instead of common YAML classes", () => {
+test("adds type-specific YAML classes and overrides duplicate attributes", () => {
     const env = {
         frontmatter: {
             markdown: {
@@ -173,11 +172,69 @@ test("uses type-specific YAML classes instead of common YAML classes", () => {
         env
     );
 
-    assert.match(html, /class="bordered-admonition info option-class yaml-info"/);
-    assert.doesNotMatch(html, /yaml-common/);
+    assert.match(html, /class="bordered-admonition info option-class yaml-common yaml-info"/);
     assert.match(html, /role="note"/);
     assert.match(html, /data-level="info"/);
     assert.match(html, /aria-label="Information"/);
+});
+
+test("adds shared and type-specific YAML classes for each note type", () => {
+    const env = {
+        frontmatter: {
+            markdown: {
+                note: {
+                    classes: "wp-block-paragraph",
+                    info: { classes: "is-style-icon_info" },
+                    warn: { classes: "is-style-icon_warn" }
+                }
+            }
+        }
+    };
+
+    const infoHtml = render(":::note info Title\nContent\n:::\n", {}, env);
+    const warnHtml = render(":::note warn Title\nContent\n:::\n", {}, env);
+
+    assert.match(infoHtml, /class="bordered-admonition info wp-block-paragraph is-style-icon_info"/);
+    assert.match(warnHtml, /class="bordered-admonition warn wp-block-paragraph is-style-icon_warn"/);
+});
+
+test("combines classes and attributes across options, YAML, and the opening line", () => {
+    const env = {
+        frontmatter: {
+            markdown: {
+                note: {
+                    classes: "shared yaml-common",
+                    attributes: { id: "yaml-id", "data-level": "yaml", "data-source": "frontmatter" },
+                    info: {
+                        classes: "shared yaml-info",
+                        attributes: { id: "yaml-info-id", "data-level": "yaml-info" }
+                    }
+                }
+            }
+        }
+    };
+    const html = render(
+        ":::note info Title {.shared .block-class #block-id data-level=block}\nContent\n:::\n",
+        {
+            classes: "shared option-class",
+            attributes: { id: "option-id", role: "note", "data-level": "option", class: "ignored" },
+            types: {
+                info: {
+                    classes: "shared option-info",
+                    attributes: { id: "option-info-id", "data-level": "option-info", "aria-label": "Info" }
+                }
+            }
+        },
+        env
+    );
+
+    assert.match(html, /class="bordered-admonition info shared option-class option-info yaml-common yaml-info block-class"/);
+    assert.match(html, /id="block-id"/);
+    assert.match(html, /role="note"/);
+    assert.match(html, /data-source="frontmatter"/);
+    assert.match(html, /aria-label="Info"/);
+    assert.match(html, /data-level="block"/);
+    assert.doesNotMatch(html, /ignored/);
 });
 
 test("parses block classes, id, and custom attributes with highest priority", () => {

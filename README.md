@@ -85,26 +85,24 @@ This plugin cannot parse raw YAML text, but it can read information stored in `e
 markdown:
   note:
     classes:
-      - shared-note
+      - wp-block-paragraph
     embedCss: false
     info:
       classes:
         - is-style-icon_info
-        - wp-block-paragraph
       attributes:
         role: note
         data-source: markdown
       defaultTitle: null
       style: bordered
       embedCss: true
-  mojicolor:
-    bold: color
-  digit:
-    locale: jp
+    warn:
+      classes:
+        - is-style-icon_warn
 ---
 ```
 
-The settings directly under `markdown.note` apply to all types. A type key such as `markdown.note.info` overrides shared values for that type. If both levels specify `classes`, the type-specific YAML classes replace the shared YAML classes. Classes from JavaScript options and the opening line are also added. HTML attributes merge by name, with the more specific value winning.
+The settings directly under `markdown.note` apply to all types. Classes from shared and type-specific JavaScript options, shared and type-specific YAML, and the opening line are added in that order, without duplicates. In this example, info boxes receive `wp-block-paragraph is-style-icon_info`, while warn boxes receive `wp-block-paragraph is-style-icon_warn`. HTML attributes are added by name; a later value replaces an earlier value for the same name, including `id`. Use `classes` to add classes; `attributes.class` is ignored.
 
 ### CSS embedding
 
@@ -241,26 +239,24 @@ WordPress / SWELL の info ボックスで使う class を付けます。
 markdown:
   note:
     classes:
-      - shared-note
+      - wp-block-paragraph
     embedCss: false
     info:
       classes:
         - is-style-icon_info
-        - wp-block-paragraph
       attributes:
         role: note
         data-source: markdown
       defaultTitle: null
       style: bordered
       embedCss: true
-  mojicolor:
-    bold: color
-  digit:
-    locale: jp
+    warn:
+      classes:
+        - is-style-icon_warn
 ---
 ```
 
-`markdown.note` 直下の設定は全タイプ共通です。`markdown.note.info` などのタイプ別設定は、そのタイプの共通設定より優先されます。両方に `classes` がある場合、タイプ別 YAML の class が共通 YAML の class を置き換えます。JavaScript オプションと開始行の class はさらに追加されます。HTML 属性は名前ごとに統合し、より個別の設定が優先されます。
+`markdown.note` 直下の設定は全タイプ共通です。class は JavaScript の共通設定→タイプ別設定→YAML の共通設定→タイプ別設定→開始行の順に、重複なく追加されます。この例では info ボックスに `wp-block-paragraph is-style-icon_info`、warn ボックスに `wp-block-paragraph is-style-icon_warn` が付きます。HTML 属性は名前ごとに追加され、`id` を含め同名の属性は後の値で上書きされます。class の追加には `classes` を使い、`attributes.class` は無視されます。
 
 ### CSS の埋め込み
 

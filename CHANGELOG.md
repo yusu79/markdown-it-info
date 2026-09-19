@@ -5,6 +5,12 @@
 All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-09-19
+
+### Fixed
+
+- Add shared and type-specific classes together for JavaScript options and YAML front matter, while continuing to replace duplicate HTML attributes with the more specific value.
+
 ## [1.1.0] - 2026-09-18
 
 ### Added
@@ -30,6 +36,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 すべての重要な変更をこのファイルに記録します。
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に基づき、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) を採用しています。
+
+## [1.1.1] - 2026-09-19
+
+### 修正
+
+- JavaScriptオプションとYAMLフロントマターで、共通classとタイプ別classを追加して併用できるようにしました。同名のHTML属性は、引き続きより個別の値で上書きします。
 
 ## [1.1.0] - 2026-09-18
 
