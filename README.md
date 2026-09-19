@@ -99,10 +99,6 @@ markdown:
     warn:
       classes:
         - is-style-icon_warn
-  mojicolor:
-    bold: color
-  digit:
-    locale: en
 ---
 ```
 
@@ -257,10 +253,6 @@ markdown:
     warn:
       classes:
         - is-style-icon_warn
-  mojicolor:
-    bold: color
-  digit:
-    locale: jp
 ---
 ```
 
