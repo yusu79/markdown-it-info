@@ -21,6 +21,180 @@ function render(source, options = {}, env = {}) {
     return new MarkdownIt().use(markdownItInfo, options).render(source, env);
 }
 
+function parse(source, options = {}, env = {}) {
+    return new MarkdownIt().use(markdownItInfo, options).parse(source, env);
+}
+
+test("maps admonition content tokens to their document lines", () => {
+    const tokens = parse([
+        "# Before",
+        "",
+        ":::note info Title",
+        "## Heading",
+        "",
+        "Paragraph",
+        "",
+        "- Item",
+        ":::"
+    ].join("\n"));
+    const mappedTokens = tokens
+        .filter(token => token.map && ["heading_open", "admonition_heading_open", "paragraph_open", "bullet_list_open"].includes(token.type))
+        .map(token => [token.type, token.map]);
+
+    assert.deepEqual(mappedTokens, [
+        ["heading_open", [0, 1]],
+        ["admonition_heading_open", [3, 4]],
+        ["paragraph_open", [5, 6]],
+        ["bullet_list_open", [7, 8]],
+        ["paragraph_open", [7, 8]]
+    ]);
+});
+
+test("maps nested admonition tokens to their document lines", () => {
+    const tokens = parse([
+        "# Before",
+        "",
+        ":::note info Outer",
+        "Outer paragraph",
+        "",
+        ":::note question Inner",
+        "## Inner heading",
+        "",
+        "Inner paragraph",
+        ":::",
+        ":::"
+    ].join("\n"));
+    const mappedTokens = tokens
+        .filter(token => token.map && ["admonition_open", "heading_open", "admonition_heading_open", "paragraph_open"].includes(token.type))
+        .map(token => [token.type, token.map]);
+
+    assert.deepEqual(mappedTokens, [
+        ["heading_open", [0, 1]],
+        ["admonition_open", [2, 11]],
+        ["paragraph_open", [3, 4]],
+        ["admonition_open", [5, 10]],
+        ["admonition_heading_open", [6, 7]],
+        ["paragraph_open", [8, 9]]
+    ]);
+});
+
+test("keeps admonition headings out of the document heading hierarchy", () => {
+    const source = [
+        "## Outside section",
+        "",
+        ":::note info",
+        "## Inside level 2",
+        "### Inside level 3",
+        ":::",
+        "",
+        "### Outside child",
+        "",
+        "## Next outside section"
+    ].join("\n");
+    const tokens = parse(source);
+    const documentHeadings = tokens
+        .filter(token => token.type === "heading_open")
+        .map(token => [token.tag, token.map]);
+    const admonitionHeadings = tokens
+        .filter(token => token.type === "admonition_heading_open")
+        .map(token => [token.tag, token.attrGet("class"), token.map]);
+
+    assert.deepEqual(documentHeadings, [
+        ["h2", [0, 1]],
+        ["h3", [7, 8]],
+        ["h2", [9, 10]]
+    ]);
+    assert.deepEqual(admonitionHeadings, [
+        ["div", "markdown-it-info-heading markdown-it-info-heading-level-2", [3, 4]],
+        ["div", "markdown-it-info-heading markdown-it-info-heading-level-3", [4, 5]]
+    ]);
+});
+
+test("renders all admonition heading levels as styled non-heading elements", () => {
+    for (let level = 1; level <= 6; level++) {
+        const source = `:::note info\n${"#".repeat(level)} Inside heading\n:::\n`;
+        const referenceHtml = render(source);
+        const embeddedHtml = render(source, { embedCss: true });
+
+        assert.match(
+            referenceHtml,
+            new RegExp(`<div class="markdown-it-info-heading markdown-it-info-heading-level-${level}">Inside heading</div>`)
+        );
+        assert.doesNotMatch(referenceHtml, new RegExp(`<h${level}[ >]`));
+        assert.match(
+            embeddedHtml,
+            new RegExp(`<div class="markdown-it-info-heading markdown-it-info-heading-level-${level}" style="[^"]*font-size:[^"]*font-weight:700[^"]*">Inside heading</div>`)
+        );
+        if (level <= 2) {
+            assert.match(
+                embeddedHtml,
+                /padding-bottom:\.3em;border-bottom:1px solid var\(--vscode-editorWidget-border, rgba\(127, 127, 127, \.35\)\)/
+            );
+        } else {
+            assert.doesNotMatch(embeddedHtml, /border-bottom:/);
+        }
+        assert.match(embeddedHtml, /markdown-it-info-titleless markdown-it-info-embedded/);
+        assert.match(
+            embeddedHtml,
+            /class="markdown-it-info-icon"[^>]*top:\.925rem;left:1\.2rem/
+        );
+        assert.doesNotMatch(embeddedHtml, new RegExp(`<h${level}[ >]`));
+    }
+});
+
+test("uses the body background when an embedded titleless box starts with a visual heading", () => {
+    const html = render(
+        ":::note info\n# Heading\nBody\n:::\n",
+        {
+            embedCss: true,
+            colors: {
+                background: "#112233",
+                titleBackground: "#44ff44"
+            }
+        }
+    );
+
+    assert.match(
+        html,
+        /class="bordered-admonition info markdown-it-info-titleless markdown-it-info-embedded"[^>]*background-color:#112233/
+    );
+    assert.doesNotMatch(html, /background-color:#44ff44/);
+    assert.match(html, /class="markdown-it-info-icon"[^>]*top:\.925rem;left:1\.2rem/);
+});
+
+test("reference styles distinguish all visual admonition heading levels", () => {
+    const fontSizes = ["1.5rem", "1.375rem", "1.25rem", "1.125rem", "1rem", ".875rem"];
+
+    for (const style of ["default", "qiita", "zenn"]) {
+        const css = fs.readFileSync(
+            path.join(__dirname, "../reference-styles", referenceStyleFiles[style]),
+            "utf8"
+        );
+        const classPrefix = styleClassPrefixes[style];
+
+        assert.match(
+            css,
+            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition .markdown-it-info-heading`)}\\s*\\{[^}]*font-weight:\\s*700;[^}]*line-height:\\s*2rem`, "s")
+        );
+
+        for (let level = 1; level <= 6; level++) {
+            assert.match(
+                css,
+                new RegExp(`${escapeRegExp(`.${classPrefix}-admonition .markdown-it-info-heading-level-${level}`)}\\s*\\{[^}]*font-size:\\s*${escapeRegExp(fontSizes[level - 1])}`, "s")
+            );
+        }
+
+        assert.match(
+            css,
+            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition .markdown-it-info-heading-level-1`)}\\s*,\\s*${escapeRegExp(`.${classPrefix}-admonition .markdown-it-info-heading-level-2`)}\\s*\\{[^}]*padding-bottom:\\s*\\.3em;[^}]*border-bottom:\\s*1px solid var\\(--vscode-editorWidget-border, rgba\\(127, 127, 127, \\.35\\)\\)`, "s")
+        );
+        assert.doesNotMatch(
+            css,
+            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition .markdown-it-info-heading-level-3`)}\\s*\\{[^}]*border-bottom:`, "s")
+        );
+    }
+});
+
 test("uses the bordered class names when no style is specified", () => {
     const html = render(":::note info Title\nContent\n:::\n");
 
@@ -279,6 +453,25 @@ test("keeps an invalid trailing attribute block in the title", () => {
     assert.match(html, />A \{not-an-attribute\}<\/p>/);
 });
 
+test("keeps attribute-like text titleless while editing a titleless opening line", () => {
+    for (const attributeDraft of ["{}", "{css}", "{tag}", "{css=}"]) {
+        const html = render(`:::note info ${attributeDraft}\nContent\n:::\n`);
+        const embeddedHtml = render(
+            `:::note info ${attributeDraft}\nContent\n:::\n`,
+            { embedCss: true }
+        );
+
+        assert.match(html, /class="bordered-admonition info markdown-it-info-has-content-start"/);
+        assert.match(html, /<p class="markdown-it-info-content-start">Content<\/p>/);
+        assert.doesNotMatch(html, /bordered-admonition-title/);
+        assert.doesNotMatch(html, new RegExp(escapeRegExp(attributeDraft)));
+        assert.match(embeddedHtml, /class="bordered-admonition info markdown-it-info-embedded"/);
+        assert.match(embeddedHtml, /class="markdown-it-info-icon"/);
+        assert.doesNotMatch(embeddedHtml, /bordered-admonition-title/);
+        assert.doesNotMatch(embeddedHtml, new RegExp(escapeRegExp(attributeDraft)));
+    }
+});
+
 test("uses the reserved css control without rendering it as an HTML attribute", () => {
     const html = render(":::note info Title {.box css=true}\nContent\n:::\n");
 
@@ -397,7 +590,7 @@ test("reference styles keep a pseudo icon fallback for non-paragraph titleless c
         assert.match(css, /--markdown-it-info-icon-color/);
         assert.match(
             css,
-            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition.markdown-it-info-embedded`)}:before,[^}]*content:\\s*none`, "s")
+            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition.markdown-it-info-titleless.markdown-it-info-embedded`)}:before,[^}]*content:\\s*none`, "s")
         );
     }
 });

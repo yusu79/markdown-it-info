@@ -31,6 +31,14 @@ const
         alert: "×",
         question: "?"
     },
+    ADMONITION_HEADING_FONT_SIZES = {
+        1: "1.5rem",
+        2: "1.375rem",
+        3: "1.25rem",
+        4: "1.125rem",
+        5: "1rem",
+        6: ".875rem"
+    },
     PRESET_COLORS = {
         default: {
             info: {
@@ -148,7 +156,8 @@ function renderAdmonitionOpen() {
                 attributes.style,
                 hasVisualTitle,
                 plainContentStart,
-                attributes.colors.text !== undefined
+                attributes.colors.text !== undefined,
+                hasVisualTitle || attributes.hasHeadingStart
             )
             : createColorOverrideStyle(attributes.colors);
 
@@ -504,6 +513,16 @@ function extractTrailingAttributes(value) {
 
     const attributes = parseBlockAttributes(value.slice(openingIndex + 1, -1));
     if (!attributes) {
+        const params = value.slice(0, openingIndex).trimEnd();
+
+        if (isTitlelessAdmonitionPrefix(params)) {
+            return {
+                params,
+                attributes: emptyParsedAttributes(),
+                hasAttributes: false
+            };
+        }
+
         return {
             params: value,
             attributes: emptyParsedAttributes(),
@@ -516,6 +535,13 @@ function extractTrailingAttributes(value) {
         attributes,
         hasAttributes: true
     };
+}
+
+function isTitlelessAdmonitionPrefix(value) {
+    const params = value.trim().split(/\s+/);
+
+    return (params[0] === "note" || params[0] === "message")
+        && (params.length === 1 || (params.length === 2 && VALID_TYPES.has(params[1])));
 }
 
 function findTrailingAttributeOpening(value) {
@@ -695,14 +721,14 @@ function createDesign(style, type, colors) {
     };
 }
 
-function createContainerStyle(design, style, hasTitle, plainContentStart, hasTextOverride) {
+function createContainerStyle(design, style, hasTitle, plainContentStart, hasTextOverride, useBodyBackground) {
     return declarationsToStyle({
         position: "relative",
         margin: "1.5625em 0",
         padding: hasTitle && !plainContentStart ? "0 1.2rem" : "0 1.2rem 0 3.6rem",
         "border-left": `.4rem solid ${design.border}`,
         "border-radius": design.borderRadius,
-        "background-color": hasTitle ? design.background : design.titleBackground,
+        "background-color": useBodyBackground ? design.background : design.titleBackground,
         color: style === "default" && !hasTextOverride ? "inherit" : design.text,
         overflow: "auto",
         "box-sizing": "border-box"
@@ -821,6 +847,19 @@ function createFenceCodeStyle(design, style) {
 function createParagraphStyle() {
     return declarationsToStyle({
         "margin-top": ".8rem"
+    });
+}
+
+function createAdmonitionHeadingStyle(level) {
+    return declarationsToStyle({
+        margin: ".65rem 0 .5rem",
+        "padding-bottom": level <= 2 ? ".3em" : undefined,
+        "border-bottom": level <= 2
+            ? "1px solid var(--vscode-editorWidget-border, rgba(127, 127, 127, .35))"
+            : undefined,
+        "font-size": ADMONITION_HEADING_FONT_SIZES[level],
+        "font-weight": "700",
+        "line-height": "2rem"
     });
 }
 
@@ -1059,6 +1098,37 @@ function createAdmonitionTokens(state, startLine, endLine, type, title, markerCo
         state.env,
         state.tokens
     );
+
+    for (let index = contentTokenStart; index < state.tokens.length; index++) {
+        const contentToken = state.tokens[index];
+
+        if (contentToken.map) {
+            contentToken.map[0] += contentStart;
+            contentToken.map[1] += contentStart;
+        }
+
+        if (contentToken.type === "heading_open") {
+            const level = Number(contentToken.tag.slice(1));
+
+            if (index === contentTokenStart) {
+                resolvedSettings.hasHeadingStart = true;
+            }
+
+            contentToken.type = "admonition_heading_open";
+            contentToken.tag = "div";
+            contentToken.attrJoin(
+                "class",
+                `markdown-it-info-heading markdown-it-info-heading-level-${level}`
+            );
+
+            if (settings.embedCss) {
+                applyTokenStyle(contentToken, createAdmonitionHeadingStyle(level));
+            }
+        } else if (contentToken.type === "heading_close") {
+            contentToken.type = "admonition_heading_close";
+            contentToken.tag = "div";
+        }
+    }
 
     if (title === null) {
         const contentTitleToken = state.tokens[contentTokenStart];

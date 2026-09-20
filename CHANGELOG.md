@@ -5,6 +5,14 @@
 All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.2] - 2026-09-21
+
+### Fixed
+
+- Keep headings inside boxes visually styled while excluding them from the document heading hierarchy, preventing VS Code folding range and document symbol errors.
+- Render titleless boxes that begin with a heading using the correct body background and a single icon when CSS is embedded.
+- Keep titleless rendering stable while typing incomplete opening-line attributes such as `{css}` or `{tag}`.
+
 ## [1.1.1] - 2026-09-19
 
 ### Fixed
@@ -36,6 +44,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 すべての重要な変更をこのファイルに記録します。
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に基づき、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) を採用しています。
+
+## [1.1.2] - 2026-09-21
+
+### 修正
+
+- ボックス内の見出しを視覚的な見出しとして表示しつつ、文書の見出し階層から除外し、VS Codeのfolding rangeとdocument symbolのエラーを防ぐようにしました。
+- CSS埋め込み時、見出しから始まるタイトルなしボックスに正しい本文背景色を使用し、アイコンを1つだけ表示するようにしました。
+- `{css}`や`{tag}`など、開始行の属性を入力途中でもタイトルなし表示を維持するようにしました。
 
 ## [1.1.1] - 2026-09-19
 
