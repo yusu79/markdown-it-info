@@ -157,7 +157,7 @@ function renderAdmonitionOpen() {
                 hasVisualTitle,
                 plainContentStart,
                 attributes.colors.text !== undefined,
-                hasVisualTitle || attributes.hasHeadingStart
+                hasVisualTitle || attributes.hasContent
             )
             : createColorOverrideStyle(attributes.colors);
 
@@ -1099,6 +1099,8 @@ function createAdmonitionTokens(state, startLine, endLine, type, title, markerCo
         state.tokens
     );
 
+    resolvedSettings.hasContent = state.tokens.length > contentTokenStart;
+
     for (let index = contentTokenStart; index < state.tokens.length; index++) {
         const contentToken = state.tokens[index];
 
@@ -1109,10 +1111,6 @@ function createAdmonitionTokens(state, startLine, endLine, type, title, markerCo
 
         if (contentToken.type === "heading_open") {
             const level = Number(contentToken.tag.slice(1));
-
-            if (index === contentTokenStart) {
-                resolvedSettings.hasHeadingStart = true;
-            }
 
             contentToken.type = "admonition_heading_open";
             contentToken.tag = "div";

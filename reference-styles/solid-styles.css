@@ -22,6 +22,7 @@
 }
 
 .solid-admonition:not(.markdown-it-info-embedded) pre {
+    margin: .8rem 0;
     background-color: #202020 !important;
 }
 

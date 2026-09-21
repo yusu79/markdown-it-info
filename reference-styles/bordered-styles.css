@@ -35,11 +35,16 @@
 }
 
 .bordered-admonition:not(.markdown-it-info-embedded) pre {
+  margin: .8rem 0;
   background-color: #202020 !important;
 }
 
 .bordered-admonition:not(.markdown-it-info-embedded) pre code {
   background-color: transparent !important;
+}
+
+.bordered-admonition:not(.markdown-it-info-embedded) blockquote {
+  margin: .8rem 0;
 }
 
 .bordered-admonition>p {

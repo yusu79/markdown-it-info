@@ -162,6 +162,28 @@ test("uses the body background when an embedded titleless box starts with a visu
     assert.match(html, /class="markdown-it-info-icon"[^>]*top:\.925rem;left:1\.2rem/);
 });
 
+test("uses the body background when an embedded titleless box starts with non-paragraph content", () => {
+    const fence = "`".repeat(3);
+    const sources = [
+        `:::note info {css=true}\n${fence}js\nconst value = 1;\n${fence}\n:::\n`,
+        ":::note info {css=true}\n> Quoted content\n:::\n"
+    ];
+
+    for (const source of sources) {
+        const html = render(source, {
+            colors: {
+                background: "#112233",
+                titleBackground: "#44ff44"
+            }
+        });
+
+        assert.match(
+            html,
+            /class="bordered-admonition info markdown-it-info-titleless markdown-it-info-embedded"[^>]*background-color:#112233/
+        );
+    }
+});
+
 test("reference styles distinguish all visual admonition heading levels", () => {
     const fontSizes = ["1.5rem", "1.375rem", "1.25rem", "1.125rem", "1rem", ".875rem"];
 
@@ -608,10 +630,42 @@ test("reference styles retain their original non-code body rules", () => {
             new RegExp(`${escapeRegExp(`.${classPrefix}-admonition>.${classPrefix}-admonition-title`)}\\s*\\{[^}]*font-weight:\\s*700`, "s")
         );
         assert.doesNotMatch(css, new RegExp(`${escapeRegExp(`.${classPrefix}-admonition code`)}\\s*\\{`));
-        if (style === "default") {
-            assert.doesNotMatch(css, new RegExp(`${escapeRegExp(`.${classPrefix}-admonition blockquote`)}\\s*\\{`));
-        }
         assert.doesNotMatch(css, new RegExp(`${escapeRegExp(`.${classPrefix}-admonition>.markdown-it-info-content-start`)}\\s*\\{`));
+    }
+});
+
+test("reference and embedded styles use the same block content margins", () => {
+    const fence = "`".repeat(3);
+
+    for (const style of ["default", "qiita", "zenn"]) {
+        const css = fs.readFileSync(
+            path.join(__dirname, "../reference-styles", referenceStyleFiles[style]),
+            "utf8"
+        );
+        const classPrefix = styleClassPrefixes[style];
+
+        assert.match(
+            css,
+            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition:not(.markdown-it-info-embedded) pre`)}\\s*\\{[^}]*margin:\\s*\\.8rem 0`, "s")
+        );
+        assert.match(
+            css,
+            new RegExp(`${escapeRegExp(`.${classPrefix}-admonition:not(.markdown-it-info-embedded) blockquote`)}\\s*\\{[^}]*margin:\\s*\\.8rem 0`, "s")
+        );
+
+        for (const title of ["", " Title"]) {
+            const codeHtml = render(
+                `:::note info${title} {css=true}\n${fence}js\nconst value = 1;\n${fence}\n:::\n`,
+                { style }
+            );
+            const quoteHtml = render(
+                `:::note info${title} {css=true}\n> Quoted content\n:::\n`,
+                { style }
+            );
+
+            assert.match(codeHtml, /<pre style="[^"]*margin:\.8rem 0/);
+            assert.match(quoteHtml, /<blockquote style="[^"]*margin:\.8rem 0/);
+        }
     }
 });
 
