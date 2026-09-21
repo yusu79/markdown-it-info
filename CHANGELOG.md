@@ -5,6 +5,13 @@
 All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.3] - 2026-09-21
+
+### Fixed
+
+- Use the body background for titleless boxes that begin with a code block or blockquote when CSS is embedded.
+- Keep the vertical spacing of code blocks and blockquotes consistent between reference stylesheets and embedded CSS.
+
 ## [1.1.2] - 2026-09-21
 
 ### Fixed
@@ -44,6 +51,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 すべての重要な変更をこのファイルに記録します。
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に基づき、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) を採用しています。
+
+## [1.1.3] - 2026-09-21
+
+### 修正
+
+- CSS埋め込み時、コードブロックまたはblockquoteから始まるタイトルなしボックスに本文背景色を使用するようにしました。
+- コードブロックとblockquoteの上下余白を、参照スタイルシートと埋め込みCSSで統一しました。
 
 ## [1.1.2] - 2026-09-21
 
